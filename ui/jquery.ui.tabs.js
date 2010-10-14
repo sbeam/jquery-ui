@@ -152,13 +152,29 @@ $.widget( "ui.tabs", {
 			} else {
 				o.disabled.push( i );
 			}
+			// init ARIA
+			var tabId = self._tabId( a );
+			// ARIA anchors and li's
+			$( a ).attr( "aria-controls", tabId )
+				.attr( "tabindex", -1 )
+				.attr( "aria-selected", false )
+				.attr( "id", tabId + "-anchor" )
+				// set role to the li not the a because of NVDA tabindex issue
+				.parent().attr( "role", "tab" );	
+			// ARIA panels aka content wrapper
+			$( self.panels[i] )
+				.attr( "role" , "tabpanel" )
+				.attr("aria-hidden", true)
+				.attr("aria-expanded", false)
+				.attr( "aria-labelledby", tabId + "-anchor" );						
 		});
 
 		// initialization from scratch
 		if ( init ) {
 			// attach necessary classes for styling
 			this.element.addClass( "ui-tabs ui-widget ui-widget-content ui-corner-all" );
-			this.list.addClass( "ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all" );
+			this.list.addClass( "ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all" )
+				.attr("role", "tablist");
 			this.lis.addClass( "ui-state-default ui-corner-top" );
 			this.panels.addClass( "ui-tabs-panel ui-widget-content ui-corner-bottom" );
 
@@ -307,12 +323,23 @@ $.widget( "ui.tabs", {
 				$show.hide().removeClass( "ui-tabs-hide" ) // avoid flicker that way
 					.animate( showFx, showFx.duration || "normal", function() {
 						resetStyle( $show, showFx );
+						$show.attr( "aria-hidden", false)
+							.attr( "tabindex", 0)	
+							.attr( "aria-expanded", true);
+						$( clicked ).attr( "aria-hidden", false)
+							.attr( "tabindex", 0)	
+							.attr( "aria-selected", true);
 						self._trigger( "show", null, self._ui( clicked, $show[ 0 ] ) );
 					});
 			}
 			: function( clicked, $show ) {
-				$( clicked ).closest( "li" ).addClass( "ui-tabs-selected ui-state-active" );
-				$show.removeClass( "ui-tabs-hide" );
+				$( clicked ).attr( "tabindex", 0 )
+					.attr( "aria-selected", true )
+					.closest( "li" ).addClass( "ui-tabs-selected ui-state-active" );
+				$show.removeClass( "ui-tabs-hide" )
+					.attr( "aria-hidden", false)
+					.attr( "tabindex", 0)	
+					.attr( "aria-expanded", true);
 				self._trigger( "show", null, self._ui( clicked, $show[ 0 ] ) );
 			};
 
@@ -321,14 +348,25 @@ $.widget( "ui.tabs", {
 			? function( clicked, $hide ) {
 				$hide.animate( hideFx, hideFx.duration || "normal", function() {
 					self.lis.removeClass( "ui-tabs-selected ui-state-active" );
-					$hide.addClass( "ui-tabs-hide" );
+					$hide.addClass( "ui-tabs-hide" )
+						.attr( "aria-hidden", true)
+						.attr( "tabindex", -1)	
+						.attr( "aria-expanded", false);
+					$( clicked ).attr( "aria-hidden", false)
+						.attr( "tabindex", -1)	
+						.attr( "aria-selected", false);
 					resetStyle( $hide, hideFx );
 					self.element.dequeue( "tabs" );
 				});
 			}
 			: function( clicked, $hide, $show ) {
 				self.lis.removeClass( "ui-tabs-selected ui-state-active" );
-				$hide.addClass( "ui-tabs-hide" );
+				$( clicked ).attr( "tabindex", -1 )
+					.attr( "aria-selected", false );
+				$hide.addClass( "ui-tabs-hide" )
+					.attr( "aria-hidden", true)
+					.attr( "tabindex", -1)	
+					.attr( "aria-expanded", false);
 				self.element.dequeue( "tabs" );
 			};
 
@@ -357,6 +395,7 @@ $.widget( "ui.tabs", {
 			self.abort();
 
 			// if tab may be closed
+			// TODO a11y: set ARIA states
 			if ( o.collapsible ) {
 				if ( $li.hasClass( "ui-tabs-selected" ) ) {
 					o.selected = -1;
@@ -605,13 +644,25 @@ $.widget( "ui.tabs", {
 	},
 
 	load: function( index ) {
+		// console.log("load "+index);
 		index = this._getIndex( index );
 		var self = this,
 			o = this.options,
 			a = this.anchors.eq( index )[ 0 ],
+			panel = this.panels.eq( index )[ 0 ],
 			url = $.data( a, "load.tabs" );
-
+			
 		this.abort();
+		
+		// console.log(a);
+		// console.log(panel);
+		
+		// ARIA		
+		$( a ).attr( "tabindex", 0 )
+			.attr( "aria-selected", true );
+		$( panel ).attr( "aria-hidden", false)
+			.attr( "tabindex", 0)	
+			.attr( "aria-expanded", true);		
 
 		// not remote or from cache
 		if ( !url || this.element.queue( "tabs" ).length !== 0 && $.data( a, "cache.tabs" ) ) {
@@ -660,7 +711,7 @@ $.widget( "ui.tabs", {
 				catch ( e ) {}
 			}
 		} ) );
-
+					
 		// last, so that load event is fired before show...
 		self.element.dequeue( "tabs" );
 
