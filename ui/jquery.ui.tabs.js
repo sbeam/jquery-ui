@@ -242,6 +242,32 @@ $.widget( "ui.tabs", {
 
 				this.load( o.selected );
 			}
+			// console.log(self);
+			// a11y: init keyboard support
+			self.list.keydown(function( event ) {
+				switch ( event.keyCode ) {
+					case $.ui.keyCode.RIGHT:
+						self.select( o.selected+1 );
+						return false;
+					case $.ui.keyCode.DOWN:
+						self.select( o.selected + 1 );
+						// FIXME issues with NVDA: down key is needed for reading content
+						// return false;
+						break;
+					case $.ui.keyCode.UP:
+						self.select( o.selected - 1 );
+						return false;
+					case $.ui.keyCode.LEFT:
+						self.select( o.selected - 1 );
+						return false;
+					case $.ui.keyCode.END:
+						self.select( self.anchors.length - 1 );
+						return false;
+					case $.ui.keyCode.HOME: 
+						self.select( 0 );
+						return false;
+				}
+			});		
 
 			// clean up to avoid memory leaks in certain versions of IE 6
 			// TODO: namespace this event
@@ -300,7 +326,7 @@ $.widget( "ui.tabs", {
 				removeState( "focus", $( this ).closest( "li" ) );
 			});
 		}
-
+		
 		// set up animations
 		var hideFx, showFx;
 		if ( o.fx ) {
@@ -404,7 +430,6 @@ $.widget( "ui.tabs", {
 			self.abort();
 
 			// if tab may be closed
-			// TODO a11y: set ARIA states for collapsible (not sure if needed)
 			if ( o.collapsible ) {
 				if ( $li.hasClass( "ui-tabs-selected" ) ) {
 					o.selected = -1;
@@ -416,8 +441,9 @@ $.widget( "ui.tabs", {
 					self.element.queue( "tabs", function() {
 						hideTab( el, $hide );
 					}).dequeue( "tabs" );
-					// TODO a11y need to re-enable tabindex so the tablist is still reachable via keyboard
-					// $( el ).attr( "tabindex", 0 );
+					// a11y: need to re-enable tabindex so the tablist is still reachable via keyboard
+					// TODO a11y: still problems with focus, must be another blur
+					$( el ).attr( "tabindex", 0 );
 					// TODO a11y this blur is a accessibility nightmare
 					// do we really need it?
 					// this.blur();
