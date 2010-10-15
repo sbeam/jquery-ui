@@ -11,7 +11,8 @@
  *	jquery.ui.core.js
  *	jquery.ui.widget.js
  * 
- * a11y TODO
+ * a11y TODO *
+ * checlk when "blur 4" is needed
  * virtual buffer update needed?
  * remove attr on destroy
  * add, remove functionality
@@ -361,22 +362,26 @@ $.widget( "ui.tabs", {
 				$show.hide().removeClass( "ui-tabs-hide" ) // avoid flicker that way
 					.animate( showFx, showFx.duration || "normal", function() {
 						resetStyle( $show, showFx );
-						$show.attr( "tabindex", 0)	
-							.attr( "aria-hidden", false)
-							.attr( "aria-expanded", true);
-						$( clicked ).attr( "tabindex", 0)
-							.attr( "aria-selected", true);
+						$show.attr( "tabindex", 0 )	
+							.attr( "aria-hidden", false )
+							.attr( "aria-expanded", true );
+						$( clicked ).attr( "tabindex", 0 )
+							.attr(  "aria-selected", true )
+							// a11y: focus selected tab
+							focus();
 						self._trigger( "show", null, self._ui( clicked, $show[ 0 ] ) );
 					});
 			}
 			: function( clicked, $show ) {
 				$( clicked ).attr( "tabindex", 0 )
 					.attr( "aria-selected", true )
-					.closest( "li" ).addClass( "ui-tabs-selected ui-state-active" );
+					.closest( "li" ).addClass( "ui-tabs-selected ui-state-active" )
+					// a11y: focus selected tab
+					.end().focus();
 				$show.removeClass( "ui-tabs-hide" )
-					.attr( "tabindex", 0)	
-					.attr( "aria-hidden", false)
-					.attr( "aria-expanded", true);
+					.attr( "tabindex", 0 )	
+					.attr( "aria-hidden", false )
+					.attr( "aria-expanded", true );
 				self._trigger( "show", null, self._ui( clicked, $show[ 0 ] ) );
 			};
 
@@ -387,12 +392,12 @@ $.widget( "ui.tabs", {
 					self.lis.removeClass( "ui-tabs-selected ui-state-active" );
 					$hide.addClass( "ui-tabs-hide" )			
 						// a11y
-						.attr( "tabindex", -1)
-						.attr( "aria-hidden", true)
-						.attr( "aria-expanded", false);
+						.attr( "tabindex", -1 )
+						.attr( "aria-hidden", true )
+						.attr( "aria-expanded", false );
 					// a11y
 					$( self.anchors.eq( o.selectedBefore ) ).attr( "tabindex", -1)	
-						.attr( "aria-selected", false);
+						.attr( "aria-selected", false );
 					resetStyle( $hide, hideFx );
 					self.element.dequeue( "tabs" );
 				});
@@ -428,7 +433,9 @@ $.widget( "ui.tabs", {
 				self._trigger( "select", null, self._ui( this, $show[ 0 ] ) ) === false ) {
 				// FIXME a11y: this blur is a accessibility nightmare!
 				// need to prevent blur() when enter key is pushed to enable forms mode in screenreader
-				this.blur();
+				// do we really need it? I see no sense, except of breaking keyboard control
+				// console.log("blur 1");
+				// this.blur();
 				return false;
 			}
 			
@@ -451,10 +458,10 @@ $.widget( "ui.tabs", {
 						hideTab( el, $hide );
 					}).dequeue( "tabs" );
 					// a11y: need to re-enable tabindex so the tablist is still reachable via keyboard
-					// TODO a11y: still problems with focus, must be another blur
 					$( el ).attr( "tabindex", 0 );
-					// TODO a11y this blur is a accessibility nightmare
-					// do we really need it?
+					// FIXME a11y: this blur is a accessibility nightmare
+					// do we really need it? I see no sense, except of breaking keyboard control
+					// console.log("blur 2");
 					// this.blur();
 					return false;
 				} else if ( !$hide.length ) {
@@ -467,9 +474,11 @@ $.widget( "ui.tabs", {
 					});
 
 					// TODO make passing in node possible, see also http://dev.jqueryui.com/ticket/3171
-					self.load( self.anchors.index( this ) );
-
-					this.blur();
+					self.load( self.anchors.index( this ) );					
+					// FIXME a11y :this blur is a accessibility nightmare
+					// do we really need it? I see no sense, except of breaking keyboard control
+					// console.log("blur 3");
+					// this.blur();
 					return false;
 				}
 			}
@@ -497,11 +506,13 @@ $.widget( "ui.tabs", {
 			// Prevent IE from keeping other link focussed when using the back button
 			// and remove dotted border from clicked link. This is controlled via CSS
 			// in modern browsers; blur() removes focus from address bar in Firefox
-			// which can become a usability and annoying problem with tabs('rotate').
+			// which can become a usability and annoying problem with tabs('rotate').			
+			// FIXME a11y: this blur is a accessibility nightmare!
+			// we need to prevent blur() because IE loses focus when using keyboard control
+			// perhaps its suitable to use this only in IE6?
 			if ( $.browser.msie ) {
-				// FIXME a11y: this blur is a accessibility nightmare!
-				// we need to prevent blur() because IE loses focus when using keyboard control
-				this.blur();
+				// console.log("blur 4");
+				// this.blur();
 			}
 		});
 
@@ -859,3 +870,7 @@ $.extend( $.ui.tabs.prototype, {
 });
 
 })( jQuery );
+
+if(!console||!console.log){var console=new Array();console.log=function(msg){
+// alert(msg);
+}};
