@@ -87,17 +87,18 @@ $.widget( "ui.tabs", {
 	},
 
 	_cleanup: function() {
+		var self = this;
 		// restore all former loading tabs labels
-		this.lis.filter( ".ui-state-processing" )
-			.removeClass( "ui-state-processing" )
+		this.lis.filter( ".ui-state-processing" ).each(function() {
+			var li = $( this );			
+			// a11y: disable busy state
+			self.panels.eq( li.index( this.lis ) ).attr( "aria-busy", "false" );
+			li.removeClass( "ui-state-processing" )
 			.find( "span:data(label.tabs)" )
 				.each(function() {
 					var el = $( this );
 					el.html( el.data( "label.tabs" ) ).removeData( "label.tabs" );
 				});
-		// ARIA disable busy state
-		this.panels.each(function() {
-			$( this ).attr("aria-busy", "false")
 		});
 	},
 
@@ -156,16 +157,16 @@ $.widget( "ui.tabs", {
 			} else {
 				o.disabled.push( i );
 			}
-			// init ARIA
+			// a11y: init attributes
 			var tabId = self._tabId( a );
-			// ARIA anchors and li's
+			// a11y anchors and li's
 			$( a ).attr( "aria-controls", tabId )
 				.attr( "tabindex", -1 )
 				.attr( "aria-selected", false )
 				.attr( "id", tabId + "-anchor" )
 				// set role to the li not the a because of NVDA tabindex issue
 				.parent().attr( "role", "tab" );	
-			// ARIA panels aka content wrapper
+			// a11y panels aka content wrapper
 			$( self.panels[i] )
 				.attr( "role" , "tabpanel" )
 				.attr("aria-hidden", true)
@@ -327,11 +328,10 @@ $.widget( "ui.tabs", {
 				$show.hide().removeClass( "ui-tabs-hide" ) // avoid flicker that way
 					.animate( showFx, showFx.duration || "normal", function() {
 						resetStyle( $show, showFx );
-						$show.attr( "aria-hidden", false)
-							.attr( "tabindex", 0)	
+						$show.attr( "tabindex", 0)	
+							.attr( "aria-hidden", false)
 							.attr( "aria-expanded", true);
-						$( clicked ).attr( "aria-hidden", false)
-							.attr( "tabindex", 0)	
+						$( clicked ).attr( "tabindex", 0)
 							.attr( "aria-selected", true);
 						self._trigger( "show", null, self._ui( clicked, $show[ 0 ] ) );
 					});
@@ -341,8 +341,8 @@ $.widget( "ui.tabs", {
 					.attr( "aria-selected", true )
 					.closest( "li" ).addClass( "ui-tabs-selected ui-state-active" );
 				$show.removeClass( "ui-tabs-hide" )
-					.attr( "aria-hidden", false)
 					.attr( "tabindex", 0)	
+					.attr( "aria-hidden", false)
 					.attr( "aria-expanded", true);
 				self._trigger( "show", null, self._ui( clicked, $show[ 0 ] ) );
 			};
@@ -352,12 +352,13 @@ $.widget( "ui.tabs", {
 			? function( clicked, $hide ) {
 				$hide.animate( hideFx, hideFx.duration || "normal", function() {
 					self.lis.removeClass( "ui-tabs-selected ui-state-active" );
-					$hide.addClass( "ui-tabs-hide" )
+					$hide.addClass( "ui-tabs-hide" )			
+						// a11y
+						.attr( "tabindex", -1)
 						.attr( "aria-hidden", true)
-						.attr( "tabindex", -1)	
 						.attr( "aria-expanded", false);
-					$( clicked ).attr( "aria-hidden", false)
-						.attr( "tabindex", -1)	
+					// a11y
+					$( self.anchors.eq( o.selectedBefore ) ).attr( "tabindex", -1)	
 						.attr( "aria-selected", false);
 					resetStyle( $hide, hideFx );
 					self.element.dequeue( "tabs" );
@@ -365,11 +366,13 @@ $.widget( "ui.tabs", {
 			}
 			: function( clicked, $hide, $show ) {
 				self.lis.removeClass( "ui-tabs-selected ui-state-active" );
-				$( clicked ).attr( "tabindex", -1 )
+				// a11y
+				$( self.anchors.eq( o.selectedBefore ) ).attr( "tabindex", -1 )
 					.attr( "aria-selected", false );
 				$hide.addClass( "ui-tabs-hide" )
-					.attr( "aria-hidden", true)
+					// a11y
 					.attr( "tabindex", -1)	
+					.attr( "aria-hidden", true)
 					.attr( "aria-expanded", false);
 				self.element.dequeue( "tabs" );
 			};
@@ -393,13 +396,15 @@ $.widget( "ui.tabs", {
 				this.blur();
 				return false;
 			}
-
+			
+			// a11y: save selected state
+			o.selectedBefore = o.selected;			
 			o.selected = self.anchors.index( this );
 
 			self.abort();
 
 			// if tab may be closed
-			// TODO a11y: set ARIA states
+			// TODO a11y: set ARIA states for collapsible (not sure if needed)
 			if ( o.collapsible ) {
 				if ( $li.hasClass( "ui-tabs-selected" ) ) {
 					o.selected = -1;
@@ -411,8 +416,11 @@ $.widget( "ui.tabs", {
 					self.element.queue( "tabs", function() {
 						hideTab( el, $hide );
 					}).dequeue( "tabs" );
-
-					this.blur();
+					// TODO a11y need to re-enable tabindex so the tablist is still reachable via keyboard
+					// $( el ).attr( "tabindex", 0 );
+					// TODO a11y this blur is a accessibility nightmare
+					// do we really need it?
+					// this.blur();
 					return false;
 				} else if ( !$hide.length ) {
 					if ( o.cookie ) {
@@ -661,7 +669,7 @@ $.widget( "ui.tabs", {
 		// console.log(a);
 		// console.log(panel);
 		
-		// ARIA		
+		// a11y		
 		$( a ).attr( "tabindex", 0 )
 			.attr( "aria-selected", true );
 		$( panel ).attr( "aria-hidden", false)
@@ -676,7 +684,7 @@ $.widget( "ui.tabs", {
 
 		// load remote from here on
 		this.lis.eq( index ).addClass( "ui-state-processing" );
-		// ARIA add states for AJAX requests
+		// a11y add states for AJAX requests
 		$( panel ).attr( "aria-live", "polite" )
 			.attr( "aria-busy", "true" );
 
