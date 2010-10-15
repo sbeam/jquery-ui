@@ -95,6 +95,10 @@ $.widget( "ui.tabs", {
 					var el = $( this );
 					el.html( el.data( "label.tabs" ) ).removeData( "label.tabs" );
 				});
+		// ARIA disable busy state
+		this.panels.each(function() {
+			$( this ).attr("aria-busy", "false")
+		});
 	},
 
 	_tabify: function( init ) {
@@ -672,6 +676,9 @@ $.widget( "ui.tabs", {
 
 		// load remote from here on
 		this.lis.eq( index ).addClass( "ui-state-processing" );
+		// ARIA add states for AJAX requests
+		$( panel ).attr( "aria-live", "polite" )
+			.attr( "aria-busy", "true" );
 
 		if ( o.spinner ) {
 			var span = $( "span", a );
