@@ -10,6 +10,13 @@
  * Depends:
  *	jquery.ui.core.js
  *	jquery.ui.widget.js
+ * 
+ * a11y TODO
+ * virtual buffer update needed?
+ * remove attr on destroy
+ * add, remove functionality
+ * test all functionalities
+ * 
  */
 (function( $, undefined ) {
 
@@ -251,7 +258,7 @@ $.widget( "ui.tabs", {
 						return false;
 					case $.ui.keyCode.DOWN:
 						self.select( o.selected + 1 );
-						// FIXME issues with NVDA: down key is needed for reading content
+						// FIXME a11y: issues with NVDA: down key is needed for reading content
 						// return false;
 						break;
 					case $.ui.keyCode.UP:
@@ -419,6 +426,8 @@ $.widget( "ui.tabs", {
 				$li.hasClass( "ui-state-processing" ) ||
 				self.panels.filter( ":animated" ).length ||
 				self._trigger( "select", null, self._ui( this, $show[ 0 ] ) ) === false ) {
+				// FIXME a11y: this blur is a accessibility nightmare!
+				// need to prevent blur() when enter key is pushed to enable forms mode in screenreader
 				this.blur();
 				return false;
 			}
@@ -490,6 +499,8 @@ $.widget( "ui.tabs", {
 			// in modern browsers; blur() removes focus from address bar in Firefox
 			// which can become a usability and annoying problem with tabs('rotate').
 			if ( $.browser.msie ) {
+				// FIXME a11y: this blur is a accessibility nightmare!
+				// we need to prevent blur() because IE loses focus when using keyboard control
 				this.blur();
 			}
 		});
