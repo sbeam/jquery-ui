@@ -12,9 +12,8 @@
  *	jquery.ui.widget.js
  * 
  * a11y TODO *
- * checlk when "blur 4" is needed
+ * check when "blur 4" is needed
  * virtual buffer update needed?
- * remove attr on destroy
  * add, remove functionality
  * test all functionalities
  * 
@@ -542,7 +541,8 @@ $.widget( "ui.tabs", {
 			.removeClass( "ui-tabs ui-widget ui-widget-content ui-corner-all ui-tabs-collapsible" )
 			.removeData( "tabs" );
 
-		this.list.removeClass( "ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all" );
+		this.list.removeClass( "ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all" )
+			.removeAttr( "role-tablist" );
 
 		this.anchors.each(function() {
 			var href = $.data( this, "href.tabs" );
@@ -553,6 +553,10 @@ $.widget( "ui.tabs", {
 			$.each( [ "href", "load", "cache" ], function( i, prefix ) {
 				$this.removeData( prefix + ".tabs" );
 			});
+			$this.removeAttr( "aria-controls" )
+				.removeAttr( "aria-selected" )
+				.removeAttr( "tabindex" )
+				.removeAttr( "id" );
 		});
 
 		this.lis.unbind( ".tabs" ).add( this.panels ).each(function() {
@@ -571,9 +575,15 @@ $.widget( "ui.tabs", {
 					"ui-widget-content",
 					"ui-corner-bottom",
 					"ui-tabs-hide"
-				].join( " " ) );
+				].join( " " ) )
+				.removeAttr( "role" );
 			}
 		});
+		
+		this.panels.removeAttr( "aria-hidden" )
+			.removeAttr( "aria-expanded" )
+			.removeAttr( "tabindex" )
+			.removeAttr( "aria-labelledby" );
 
 		if ( o.cookie ) {
 			this._cookie( null, o.cookie );
