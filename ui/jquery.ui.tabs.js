@@ -638,6 +638,10 @@ $.widget( "ui.tabs", {
 
 			this.load( 0 );
 		}
+		// a11y
+		this.element
+			.attr("aria-live", "polite")
+			.attr("aria-relevant","additions");
 
 		this._trigger( "add", null, this._ui( this.anchors[ index ], this.panels[ index ] ) );
 		return this;
@@ -720,7 +724,6 @@ $.widget( "ui.tabs", {
 	},
 
 	load: function( index ) {
-		// console.log("load "+index);
 		index = this._getIndex( index );
 		var self = this,
 			o = this.options,
