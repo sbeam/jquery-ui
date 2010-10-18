@@ -9,14 +9,7 @@
  *
  * Depends:
  *	jquery.ui.core.js
- *	jquery.ui.widget.js
- * 
- * a11y TODO *
- * check when "blur 4" is needed
- * virtual buffer update needed?
- * add, remove functionality
- * test all functionalities
- * 
+ *	jquery.ui.widget.js 
  */
 (function( $, undefined ) {
 
@@ -164,21 +157,29 @@ $.widget( "ui.tabs", {
 			} else {
 				o.disabled.push( i );
 			}
+			
 			// a11y: init attributes
-			var tabId = self._tabId( a );
-			// a11y anchors and li's
-			$( a ).attr( "aria-controls", tabId )
-				.attr( "tabindex", -1 )
-				.attr( "aria-selected", false )
-				.attr( "id", tabId + "-anchor" )
-				// set role to the li not the a because of NVDA tabindex issue
-				.parent().attr( "role", "tab" );	
+			var $anchor = $( a );
+			var $panel = ( $panel ) ? $panel : $( self.panels[i] );
+			// set role to the li not the a because of NVDA tabindex issue
+			// we net to check if the tab is selected because tabify could be fired by remove with index of the currently selected tab as parameter
+			if ( !$anchor.parent().attr( "role", "tab" ).hasClass( "ui-tabs-selected" ) ) {
+				$anchor.attr( "tabindex", -1 )
+			}			
+			// set and get ID (use existing id)
+			var panelId = $( self.panels[i] ).attr( "id" );
+			var anchorId = $anchor.attr( "id" );
+			if (!anchorId) { 	
+				anchorId = panelId + "-anchor";
+				$anchor.attr( "id", anchorId)
+			}
+			$anchor.attr( "aria-controls", panelId )
+				.attr( "aria-selected", false );
 			// a11y panels aka content wrapper
-			$( self.panels[i] )
-				.attr( "role" , "tabpanel" )
+			$panel.attr( "role" , "tabpanel" )
 				.attr("aria-hidden", true)
 				.attr("aria-expanded", false)
-				.attr( "aria-labelledby", tabId + "-anchor" );						
+				.attr( "aria-labelledby", anchorId );						
 		});
 
 		// initialization from scratch
@@ -249,7 +250,7 @@ $.widget( "ui.tabs", {
 
 				this.load( o.selected );
 			}
-			// console.log(self);
+			
 			// a11y: init keyboard support
 			self.list.keydown(function( event ) {
 				switch ( event.keyCode ) {
@@ -664,6 +665,11 @@ $.widget( "ui.tabs", {
 
 		this._tabify();
 
+		// ARIA
+		this.element
+			.attr("aria-live", "polite")
+			.attr("aria-relevant","removals");
+				
 		this._trigger( "remove", null, this._ui( $li.find( "a" )[ 0 ], $panel[ 0 ] ) );
 		return this;
 	},
@@ -723,9 +729,6 @@ $.widget( "ui.tabs", {
 			url = $.data( a, "load.tabs" );
 			
 		this.abort();
-		
-		// console.log(a);
-		// console.log(panel);
 		
 		// a11y		
 		$( a ).attr( "tabindex", 0 )
@@ -881,6 +884,6 @@ $.extend( $.ui.tabs.prototype, {
 
 })( jQuery );
 
-if(!console||!console.log){var console=new Array();console.log=function(msg){
-// alert(msg);
-}};
+// if(!console||!console.log){var console=new Array();console.log=function(msg){
+	// alert(msg);
+// }};
