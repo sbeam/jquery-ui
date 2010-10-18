@@ -1,6 +1,6 @@
 A fork of jQuery UI to push development of accessibility within the Tabs widget.
 
-This is a development version with basic integration. Most features should be supported but please check todo list below.
+This is a development version with basic integration. All features should be supported but please check todo list below.
 
 
 
@@ -9,8 +9,4 @@ ToDo:
 * Blur temporally disabled cause of massive usability issues. 
  * check when "blur 4" is needed 
 * virtual buffer update needed?
-* test all features, except: 
- * destroy (needs check)
- * remove
- * add
 * aria disabled for disable option/method
