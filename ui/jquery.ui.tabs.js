@@ -177,7 +177,6 @@ $.widget( "ui.tabs", {
 				.attr( "aria-selected", false );
 			// a11y panels aka content wrapper
 			$panel.attr( "role" , "tabpanel" )
-				.attr("aria-hidden", true)
 				.attr("aria-expanded", false)
 				.attr( "aria-labelledby", anchorId );						
 		});
@@ -362,8 +361,7 @@ $.widget( "ui.tabs", {
 				$show.hide().removeClass( "ui-tabs-hide" ) // avoid flicker that way
 					.animate( showFx, showFx.duration || "normal", function() {
 						resetStyle( $show, showFx );
-						$show.attr( "tabindex", 0 )	
-							.attr( "aria-hidden", false )
+						$show.attr( "tabindex", 0 )
 							.attr( "aria-expanded", true );
 						$( clicked ).attr( "tabindex", 0 )
 							.attr(  "aria-selected", true )
@@ -379,8 +377,7 @@ $.widget( "ui.tabs", {
 					// a11y: focus selected tab
 					.end().focus();
 				$show.removeClass( "ui-tabs-hide" )
-					.attr( "tabindex", 0 )	
-					.attr( "aria-hidden", false )
+					.attr( "tabindex", 0 )
 					.attr( "aria-expanded", true );
 				self._trigger( "show", null, self._ui( clicked, $show[ 0 ] ) );
 			};
@@ -393,7 +390,6 @@ $.widget( "ui.tabs", {
 					$hide.addClass( "ui-tabs-hide" )			
 						// a11y
 						.attr( "tabindex", -1 )
-						.attr( "aria-hidden", true )
 						.attr( "aria-expanded", false );
 					// a11y
 					$( self.anchors.eq( o.selectedBefore ) ).attr( "tabindex", -1)	
@@ -409,9 +405,8 @@ $.widget( "ui.tabs", {
 					.attr( "aria-selected", false );
 				$hide.addClass( "ui-tabs-hide" )
 					// a11y
-					.attr( "tabindex", -1)	
-					.attr( "aria-hidden", true)
-					.attr( "aria-expanded", false);
+					.attr( "tabindex", -1)
+					.attr( "aria-expanded", false );
 				self.element.dequeue( "tabs" );
 			};
 
@@ -581,8 +576,7 @@ $.widget( "ui.tabs", {
 			}
 		});
 		
-		this.panels.removeAttr( "aria-hidden" )
-			.removeAttr( "aria-expanded" )
+		this.panels.removeAttr( "aria-expanded" )
 			.removeAttr( "tabindex" )
 			.removeAttr( "aria-labelledby" );
 
@@ -736,9 +730,8 @@ $.widget( "ui.tabs", {
 		// a11y		
 		$( a ).attr( "tabindex", 0 )
 			.attr( "aria-selected", true );
-		$( panel ).attr( "aria-hidden", false)
-			.attr( "tabindex", 0)	
-			.attr( "aria-expanded", true);		
+		$( panel ).attr( "tabindex", 0 )	
+			.attr( "aria-expanded", true );		
 
 		// not remote or from cache
 		if ( !url || this.element.queue( "tabs" ).length !== 0 && $.data( a, "cache.tabs" ) ) {
