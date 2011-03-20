@@ -175,9 +175,9 @@ $.widget( "ui.tabs", {
 			}
 			$anchor.attr( "aria-controls", panelId )
 				.attr( "aria-selected", false );
-			// a11y panels aka content wrapper
+			// a11y: panels aka content wrapper
 			$panel.attr( "role" , "tabpanel" )
-				.attr("aria-expanded", false)
+				.attr( "aria-expanded", false )
 				.attr( "aria-labelledby", anchorId );						
 		});
 
@@ -186,7 +186,7 @@ $.widget( "ui.tabs", {
 			// attach necessary classes for styling
 			this.element.addClass( "ui-tabs ui-widget ui-widget-content ui-corner-all" );
 			this.list.addClass( "ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all" )
-				.attr("role", "tablist");
+				.attr( "role", "tablist" );
 			this.lis.addClass( "ui-state-default ui-corner-top" );
 			this.panels.addClass( "ui-tabs-panel ui-widget-content ui-corner-bottom" );
 
@@ -634,8 +634,8 @@ $.widget( "ui.tabs", {
 		}
 		// a11y
 		this.element
-			.attr("aria-live", "polite")
-			.attr("aria-relevant","additions");
+			.attr( "aria-live", "polite" )
+			.attr( "aria-relevant", "additions" );
 
 		this._trigger( "add", null, this._ui( this.anchors[ index ], this.panels[ index ] ) );
 		return this;
@@ -663,10 +663,10 @@ $.widget( "ui.tabs", {
 
 		this._tabify();
 
-		// ARIA
+		// a11y
 		this.element
-			.attr("aria-live", "polite")
-			.attr("aria-relevant","removals");
+			.attr( "aria-live", "polite" )
+			.attr( "aria-relevant", "removals" );
 				
 		this._trigger( "remove", null, this._ui( $li.find( "a" )[ 0 ], $panel[ 0 ] ) );
 		return this;
@@ -741,7 +741,7 @@ $.widget( "ui.tabs", {
 
 		// load remote from here on
 		this.lis.eq( index ).addClass( "ui-state-processing" );
-		// a11y add states for AJAX requests
+		// a11y add states for AJAX requests, see _cleanup for reset
 		$( panel ).attr( "aria-live", "polite" )
 			.attr( "aria-busy", "true" );
 
@@ -879,7 +879,3 @@ $.extend( $.ui.tabs.prototype, {
 });
 
 })( jQuery );
-
-// if(!console||!console.log){var console=new Array();console.log=function(msg){
-	// alert(msg);
-// }};
