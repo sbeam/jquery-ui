@@ -392,7 +392,7 @@ $.widget( "ui.tabs", {
 						.attr( "tabindex", -1 )
 						.attr( "aria-expanded", false );
 					// a11y
-					$( self.anchors.eq( o.selectedBefore ) ).attr( "tabindex", -1)	
+					$( self.anchors.eq( self.selectedBefore ) ).attr( "tabindex", -1)	
 						.attr( "aria-selected", false );
 					resetStyle( $hide, hideFx );
 					self.element.dequeue( "tabs" );
@@ -401,7 +401,7 @@ $.widget( "ui.tabs", {
 			: function( clicked, $hide, $show ) {
 				self.lis.removeClass( "ui-tabs-selected ui-state-active" );
 				// a11y
-				$( self.anchors.eq( o.selectedBefore ) ).attr( "tabindex", -1 )
+				$( self.anchors.eq( self.selectedBefore ) ).attr( "tabindex", -1 )
 					.attr( "aria-selected", false );
 				$hide.addClass( "ui-tabs-hide" )
 					// a11y
@@ -435,7 +435,7 @@ $.widget( "ui.tabs", {
 			}
 			
 			// a11y: save selected state
-			o.selectedBefore = o.selected;			
+			self.selectedBefore = o.selected;			
 			o.selected = self.anchors.index( this );
 
 			self.abort();
