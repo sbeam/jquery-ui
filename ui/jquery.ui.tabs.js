@@ -9,7 +9,7 @@
  *
  * Depends:
  *	jquery.ui.core.js
- *	jquery.ui.widget.js 
+ *	jquery.ui.widget.js
  */
 (function( $, undefined ) {
 
@@ -90,7 +90,7 @@ $.widget( "ui.tabs", {
 		var self = this;
 		// restore all former loading tabs labels
 		this.lis.filter( ".ui-state-processing" ).each(function() {
-			var li = $( this );			
+			var li = $( this );
 			// a11y: disable busy state
 			self.panels.eq( li.index( this.lis ) ).attr( "aria-busy", "false" );
 			li.removeClass( "ui-state-processing" )
@@ -157,7 +157,7 @@ $.widget( "ui.tabs", {
 			} else {
 				o.disabled.push( i );
 			}
-			
+
 			// a11y: init attributes
 			var $anchor = $( a );
 			var $panel = ( $panel ) ? $panel : $( self.panels[i] );
@@ -165,11 +165,11 @@ $.widget( "ui.tabs", {
 			// we net to check if the tab is selected because tabify could be fired by remove with index of the currently selected tab as parameter
 			if ( !$anchor.parent().attr( "role", "tab" ).hasClass( "ui-tabs-selected" ) ) {
 				$anchor.attr( "tabindex", -1 )
-			}			
+			}
 			// set and get ID (use existing id)
 			var panelId = $( self.panels[i] ).attr( "id" );
 			var anchorId = $anchor.attr( "id" );
-			if (!anchorId) { 	
+			if (!anchorId) {
 				anchorId = panelId + "-anchor";
 				$anchor.attr( "id", anchorId)
 			}
@@ -178,7 +178,7 @@ $.widget( "ui.tabs", {
 			// a11y: panels aka content wrapper
 			$panel.attr( "role" , "tabpanel" )
 				.attr( "aria-expanded", false )
-				.attr( "aria-labelledby", anchorId );						
+				.attr( "aria-labelledby", anchorId );
 		});
 
 		// initialization from scratch
@@ -249,7 +249,7 @@ $.widget( "ui.tabs", {
 
 				this.load( o.selected );
 			}
-			
+
 			// a11y: init keyboard support
 			self.list.keydown(function( event ) {
 				switch ( event.keyCode ) {
@@ -270,11 +270,11 @@ $.widget( "ui.tabs", {
 					case $.ui.keyCode.END:
 						self.select( self.anchors.length - 1 );
 						return false;
-					case $.ui.keyCode.HOME: 
+					case $.ui.keyCode.HOME:
 						self.select( 0 );
 						return false;
 				}
-			});		
+			});
 
 			// clean up to avoid memory leaks in certain versions of IE 6
 			// TODO: namespace this event
@@ -333,7 +333,7 @@ $.widget( "ui.tabs", {
 				removeState( "focus", $( this ).closest( "li" ) );
 			});
 		}
-		
+
 		// set up animations
 		var hideFx, showFx;
 		if ( o.fx ) {
@@ -387,12 +387,12 @@ $.widget( "ui.tabs", {
 			? function( clicked, $hide ) {
 				$hide.animate( hideFx, hideFx.duration || "normal", function() {
 					self.lis.removeClass( "ui-tabs-selected ui-state-active" );
-					$hide.addClass( "ui-tabs-hide" )			
+					$hide.addClass( "ui-tabs-hide" )
 						// a11y
 						.attr( "tabindex", -1 )
 						.attr( "aria-expanded", false );
 					// a11y
-					$( self.anchors.eq( self.selectedBefore ) ).attr( "tabindex", -1)	
+					$( self.anchors.eq( self.selectedBefore ) ).attr( "tabindex", -1)
 						.attr( "aria-selected", false );
 					resetStyle( $hide, hideFx );
 					self.element.dequeue( "tabs" );
@@ -433,9 +433,9 @@ $.widget( "ui.tabs", {
 				// this.blur();
 				return false;
 			}
-			
+
 			// a11y: save selected state
-			self.selectedBefore = o.selected;			
+			self.selectedBefore = o.selected;
 			o.selected = self.anchors.index( this );
 
 			self.abort();
@@ -469,7 +469,7 @@ $.widget( "ui.tabs", {
 					});
 
 					// TODO make passing in node possible, see also http://dev.jqueryui.com/ticket/3171
-					self.load( self.anchors.index( this ) );					
+					self.load( self.anchors.index( this ) );
 					// FIXME a11y :this blur is a accessibility nightmare
 					// do we really need it? I see no sense, except of breaking keyboard control
 					// console.log("blur 3");
@@ -501,7 +501,7 @@ $.widget( "ui.tabs", {
 			// Prevent IE from keeping other link focussed when using the back button
 			// and remove dotted border from clicked link. This is controlled via CSS
 			// in modern browsers; blur() removes focus from address bar in Firefox
-			// which can become a usability and annoying problem with tabs('rotate').			
+			// which can become a usability and annoying problem with tabs('rotate').
 			// FIXME a11y: this blur is a accessibility nightmare!
 			// we need to prevent blur() because IE loses focus when using keyboard control
 			// perhaps its suitable to use this only in IE6?
@@ -575,7 +575,7 @@ $.widget( "ui.tabs", {
 				.removeAttr( "role" );
 			}
 		});
-		
+
 		this.panels.removeAttr( "aria-expanded" )
 			.removeAttr( "tabindex" )
 			.removeAttr( "aria-labelledby" );
@@ -667,7 +667,7 @@ $.widget( "ui.tabs", {
 		this.element
 			.attr( "aria-live", "polite" )
 			.attr( "aria-relevant", "removals" );
-				
+
 		this._trigger( "remove", null, this._ui( $li.find( "a" )[ 0 ], $panel[ 0 ] ) );
 		return this;
 	},
@@ -724,14 +724,14 @@ $.widget( "ui.tabs", {
 			a = this.anchors.eq( index )[ 0 ],
 			panel = this.panels.eq( index )[ 0 ],
 			url = $.data( a, "load.tabs" );
-			
+
 		this.abort();
-		
-		// a11y		
+
+		// a11y
 		$( a ).attr( "tabindex", 0 )
 			.attr( "aria-selected", true );
-		$( panel ).attr( "tabindex", 0 )	
-			.attr( "aria-expanded", true );		
+		$( panel ).attr( "tabindex", 0 )
+			.attr( "aria-expanded", true );
 
 		// not remote or from cache
 		if ( !url || this.element.queue( "tabs" ).length !== 0 && $.data( a, "cache.tabs" ) ) {
@@ -783,7 +783,7 @@ $.widget( "ui.tabs", {
 				catch ( e ) {}
 			}
 		} ) );
-					
+
 		// last, so that load event is fired before show...
 		self.element.dequeue( "tabs" );
 
@@ -843,7 +843,7 @@ $.extend( $.ui.tabs.prototype, {
 				var t = o.selected;
 				self.select( ++t < self.anchors.length ? t : 0 );
 			}, ms );
-			
+
 			if ( e ) {
 				e.stopPropagation();
 			}
