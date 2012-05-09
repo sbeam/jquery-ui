@@ -7,6 +7,6 @@ This is a development version with basic integration. All features should be sup
 ToDo:
 
 * Blur temporally disabled cause of massive usability issues. 
- * check when "blur 4" is needed 
+	* check when "blur 4" is needed 
 * virtual buffer update needed?
 * aria disabled for disable option/method
