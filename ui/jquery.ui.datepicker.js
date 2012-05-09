@@ -1,7 +1,7 @@
-/*
+/*!
  * jQuery UI Datepicker @VERSION
  *
- * Copyright 2011, AUTHORS.txt (http://jqueryui.com/about)
+ * Copyright 2012, AUTHORS.txt (http://jqueryui.com/about)
  * Dual licensed under the MIT or GPL Version 2 licenses.
  * http://jquery.org/license
  *
@@ -620,8 +620,8 @@ $.extend(Datepicker.prototype, {
 					$.datepicker._updateDatepicker(inst);
 				}
 			}
-			catch (event) {
-				$.datepicker.log(event);
+			catch (err) {
+				$.datepicker.log(err);
 			}
 		}
 		return true;
@@ -800,10 +800,8 @@ $.extend(Datepicker.prototype, {
 		if (this._datepickerShowing) {
 			var showAnim = this._get(inst, 'showAnim');
 			var duration = this._get(inst, 'duration');
-			var self = this;
 			var postProcess = function() {
 				$.datepicker._tidyDialog(inst);
-				self._curInst = null;
 			};
 			if ($.effects && $.effects[showAnim])
 				inst.dpDiv.hide(showAnim, $.datepicker._get(inst, 'showOptions'), duration, postProcess);
