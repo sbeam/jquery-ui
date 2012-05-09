@@ -2,7 +2,7 @@ A fork of jQuery UI to push development of accessibility within the Tabs widget.
 
 This is a development version with basic integration. All features should be supported but please check todo list below.
 
-Where to find more Information:
+Where to find more information:
 https://github.com/fnagel/jQuery-Accessible-RIA/wiki/Tabs
 https://github.com/fnagel/jquery-ui/issues/24
 
