@@ -280,7 +280,7 @@ $.widget("ui.selectmenu", {
 			var opt = $(this);
 			selectOptionData.push({
 				value: opt.attr('value'),
-				text: self._formatText(opt.text()),
+				text: self._formatText(opt),
 				selected: opt.attr('selected'),
 				disabled: opt.attr('disabled'),
 				classes: opt.attr('class'),
@@ -623,9 +623,9 @@ $.widget("ui.selectmenu", {
 		}
 	},
 
-	_formatText: function(text) {
+	_formatText: function(opt) {
 		if (this.options.format) {
-			text = this.options.format(text);
+			text = this.options.format(opt.text(), opt);
 		} else if (this.options.escapeHtml) {
 			text = $('<div />').text(text).html();
 		}
